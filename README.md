@@ -1,20 +1,22 @@
 # FakeAppleUpdate
 
-Rootless Theos project for Dopamine on arm64 devices running iOS 15.
+Rootless UI prototype for jailbroken iOS 15 devices.
 
-## Current state
+## What it does
 
-This repository currently contains the build scaffold only. The Settings interface and local-only update simulation have not been implemented yet.
+- Adds a separate **«Предпросмотр обновления»** row immediately below the real Software Update row in Settings → General.
+- Opens a local screen styled after the iOS Software Update page.
+- Shows a fictional iOS 15.8.9 entry.
+- Runs a 30-second local progress simulation, then displays one randomly selected sample error.
+- The «Повторить» action starts another local 30-second simulation.
+- The preview entry remains available after restarting the device.
 
 ## Safety boundary
 
-- No real update scans, downloads, verification, installation, or reboot actions.
-- No changes to Apple's update metadata, system version, or system update preferences.
-- No hooks into `SUSUISoftwareUpdateController`, `SUManagerClient`, or Apple's update services.
-- Simulation state will be stored in the tweak's own preferences.
+This is a separate preview screen. The real Software Update row remains unchanged and available.
+
+The tweak does not contact Apple update servers and does not call Apple's scan, download, verification, installation, reboot, or update-state APIs. It does not change the installed iOS version, Apple update metadata, system update preferences, or system files. Its only persistent value is stored in its own NSUserDefaults suite (`com.sasha.fakeappleupdate`).
 
 ## Build
 
-GitHub Actions builds a rootless Debian package on macOS. Run the workflow manually from **Actions → Build FakeAppleUpdate**, or push a commit to `main`.
-
-Target device: iPhone 6s (arm64), iOS 15.8.8, Dopamine rootless.
+GitHub Actions builds a rootless Debian package for arm64 using Theos. The resulting `.deb` is uploaded as the `FakeAppleUpdate-rootless` workflow artifact.
