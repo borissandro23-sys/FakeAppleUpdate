@@ -63,6 +63,28 @@ static NSDictionary *FAUSelectedVersion(void) {
     return FAUVersionCatalog().lastObject;
 }
 
+static NSString *FAUUpdateSizeForVersion(NSDictionary *item) {
+    NSString *name = item[@"name"] ?: @"iOS 18.0";
+    NSString *versionPart = [[name componentsSeparatedByString:@" "] lastObject];
+    NSArray<NSString *> *parts = [versionPart componentsSeparatedByString:@"."];
+    NSInteger major = parts.count > 0 ? parts[0].integerValue : 18;
+    NSInteger minor = parts.count > 1 ? parts[1].integerValue : 0;
+    NSInteger patch = parts.count > 2 ? parts[2].integerValue : 0;
+
+    // Ориентировочная величина для макета. Реальный размер OTA зависит от устройства и сборки.
+    NSInteger megabytes = (minor == 0 && patch == 0)
+        ? (850 + major * 42)
+        : (180 + minor * 55 + patch * 35);
+    if ([item[@"isBeta"] boolValue]) megabytes += 120;
+    megabytes = MAX(120, MIN(megabytes, 2600));
+
+    if (megabytes >= 1024) {
+        double gigabytes = megabytes / 1024.0;
+        return [NSString stringWithFormat:@"Размер: около %.1f ГБ", gigabytes];
+    }
+    return [NSString stringWithFormat:@"Размер: около %ld МБ", (long)megabytes];
+}
+
 static UIImage *FAUImageForVersion(NSDictionary *item) {
     return [UIImage imageWithContentsOfFile:[FAUResourcePath stringByAppendingPathComponent:item[@"image"]]];
 }
@@ -198,7 +220,7 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
     UILabel *metaLabel = [[UILabel alloc] init];
     metaLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    metaLabel.text = [selected[@"isBeta"] boolValue] ? @"Apple Inc.\nБета-версия · демонстрационные данные" : @"Apple Inc.\nРазмер: демонстрационные данные";
+    metaLabel.text = [NSString stringWithFormat:@"Apple Inc.\n%@%@", [selected[@"isBeta"] boolValue] ? @"Бета-версия · " : @"", FAUUpdateSizeForVersion(selected)];
     metaLabel.font = [UIFont systemFontOfSize:13];
     metaLabel.textColor = [UIColor secondaryLabelColor];
     metaLabel.numberOfLines = 2;
