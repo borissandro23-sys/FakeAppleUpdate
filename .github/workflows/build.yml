@@ -7,15 +7,15 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install build dependencies
         run: |
-          brew update
-          brew install ldid dpkg
+          sudo apt-get update
+          sudo apt-get install -y clang make perl python3 git curl ldid dpkg-dev
 
       - name: Install Theos
         env:
