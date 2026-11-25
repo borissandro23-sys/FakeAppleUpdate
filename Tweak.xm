@@ -53,7 +53,7 @@ static NSArray<NSDictionary *> *FAUVersionCatalog(void) {
             @[@"iOS 26.0",@"19_iOS_26.png"], @[@"iOS 26.1",@"19_iOS_26.png"]
         ];
         NSMutableArray *result = [NSMutableArray arrayWithCapacity:rows.count];
-        for (NSArray *row in rows) [result addObject:@{@ "name":row[0], @"image":row[1]}];
+        for (NSArray *row in rows) [result addObject:@{@"name":row[0], @"image":row[1]}];
         items = result.copy;
     });
     return items;
