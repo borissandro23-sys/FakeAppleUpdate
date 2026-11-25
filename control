@@ -1,8 +1,8 @@
 Package: com.sasha.fakeappleupdate
 Name: FakeAppleUpdate
-Version: 0.1.0
+Version: 0.2.0
 Architecture: iphoneos-arm64
-Description: Local-only software update UI prototype for iOS 15.
+Description: Local-only iOS version picker and software update preview.
 Maintainer: Sasha
 Author: Sasha
 Section: Tweaks
