@@ -15,7 +15,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang make perl python3 git curl dpkg-dev pkg-config libssl-dev libplist-dev
+          sudo apt-get install -y clang make perl python3 git curl dpkg-dev pkg-config libssl-dev libplist-dev libtinfo6 fakeroot xz-utils
 
       - name: Build ldid
         run: |
@@ -30,6 +30,15 @@ jobs:
           git clone --recursive https://github.com/theos/theos.git "$THEOS"
           rm -rf "$THEOS/sdks"
           git clone --depth 1 https://github.com/theos/sdks.git "$THEOS/sdks"
+
+      - name: Install Linux iOS toolchain
+        env:
+          THEOS: ${{ github.workspace }}/theos
+        run: |
+          mkdir -p "$THEOS/toolchain"
+          curl -fL https://github.com/L1ghtmann/llvm-project/releases/latest/download/iOSToolchain-x86_64.tar.xz | tar -xJ -C "$THEOS/toolchain"
+          test -x "$THEOS/toolchain/linux/iphone/bin/clang"
+          test -x "$THEOS/toolchain/linux/iphone/bin/clang++"
 
       - name: Build rootless package
         env:
