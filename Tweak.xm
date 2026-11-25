@@ -35,9 +35,21 @@ static NSArray<NSDictionary *> *FAUVersionCatalog(void) {
         for (NSDictionary *group in groups) {
             for (NSString *number in [group[@"versions"] componentsSeparatedByString:@" "]) {
                 NSString *name = [group[@"prefix"] stringByAppendingString:number];
-                [result addObject:@{@"name":name, @"image":group[@"image"], @"description":group[@"description"]}];
+                [result addObject:@{@"name":name, @"image":group[@"image"], @"description":group[@"description"], @"isBeta":@NO}];
             }
         }
+        NSArray *betaVersions = @[
+            @{@"name":@"iOS 15.0 Developer Beta", @"image":@"15_iOS_15.png", @"description":@"Предварительная тестовая сборка iOS 15. В ней проверялись режимы Фокусирования, SharePlay, Live Text и изменения FaceTime до публичного выпуска.", @"isBeta":@YES},
+            @{@"name":@"iOS 16.0 Developer Beta", @"image":@"16_iOS_16.png", @"description":@"Предварительная тестовая сборка iOS 16 с ранними вариантами настраиваемого экрана блокировки и новых функций Сообщений.", @"isBeta":@YES},
+            @{@"name":@"iOS 17.0 Developer Beta", @"image":@"17_iOS_17.png", @"description":@"Предварительная тестовая сборка iOS 17. В ней тестировались StandBy, NameDrop, контактные постеры и интерактивные виджеты.", @"isBeta":@YES},
+            @{@"name":@"iOS 18.0 Developer Beta", @"image":@"18_iOS_18.png", @"description":@"Предварительная тестовая сборка iOS 18 с ранними версиями обновлённого домашнего экрана, Пункта управления и приложения Фото.", @"isBeta":@YES},
+            @{@"name":@"iOS 26.0 Developer Beta", @"image":@"19_iOS_26.png", @"description":@"Предварительная тестовая сборка iOS 26 с ранним вариантом дизайна Liquid Glass и новыми системными интерфейсами.", @"isBeta":@YES},
+            @{@"name":@"iOS 27.0 Developer Beta", @"image":@"19_iOS_26.png", @"description":@"Предварительная тестовая сборка iOS 27. В ней проверяются новые системные функции и изменения интерфейса.", @"isBeta":@YES},
+            @{@"name":@"iOS 27.2 Developer Beta", @"image":@"19_iOS_26.png", @"description":@"Тестовая сборка iOS 27.2 для разработчиков. Состав изменений зависит от конкретного beta-релиза.", @"isBeta":@YES},
+            @{@"name":@"iOS 27.3 Developer Beta", @"image":@"19_iOS_26.png", @"description":@"Бета-версия iOS 27.3 для тестирования приложений и системных изменений до общего выпуска.", @"isBeta":@YES},
+            @{@"name":@"iOS 27.3 Public Beta", @"image":@"19_iOS_26.png", @"description":@"Публичная тестовая версия iOS 27.3. Это демонстрационная запись, не пакет обновления Apple.", @"isBeta":@YES}
+        ];
+        [result addObjectsFromArray:betaVersions];
         items = result.copy;
     });
     return items;
@@ -74,9 +86,11 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section { return self.filteredVersions.count; }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"VersionCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     NSDictionary *item = self.filteredVersions[indexPath.row];
     cell.textLabel.text = item[@"name"];
+    cell.detailTextLabel.text = [item[@"isBeta"] boolValue] ? @"Бета-версия · тестовая сборка" : @"Стабильный выпуск";
+    cell.detailTextLabel.textColor = [item[@"isBeta"] boolValue] ? [UIColor systemOrangeColor] : [UIColor secondaryLabelColor];
     cell.imageView.image = FAUImageForVersion(item);
     cell.imageView.contentMode = UIViewContentModeScaleAspectFit;
     cell.accessoryType = [FAUSelectedVersion()[@"name"] isEqualToString:item[@"name"]] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
@@ -184,7 +198,7 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
     UILabel *metaLabel = [[UILabel alloc] init];
     metaLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    metaLabel.text = @"Apple Inc.\nРазмер: демонстрационные данные";
+    metaLabel.text = [selected[@"isBeta"] boolValue] ? @"Apple Inc.\nБета-версия · демонстрационные данные" : @"Apple Inc.\nРазмер: демонстрационные данные";
     metaLabel.font = [UIFont systemFontOfSize:13];
     metaLabel.textColor = [UIColor secondaryLabelColor];
     metaLabel.numberOfLines = 2;
@@ -407,6 +421,20 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
 - (void)downloadTapped {
     if (_checking) return;
+
+    NSDictionary *selected = FAUSelectedVersion();
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:FAUDefaultsSuite];
+    BOOL betaUpdatesEnabled = [defaults boolForKey:@"DemoBetaUpdatesEnabled"];
+    if ([selected[@"isBeta"] boolValue] && !betaUpdatesEnabled) {
+        _statusLabel.text = @"Бета-обновления выключены для выбранной тестовой версии.";
+        UIAlertController *betaAlert = [UIAlertController alertControllerWithTitle:@"Beta-обновления выключены"
+            message:@"Включи Beta-обновления в настройках этого макета, чтобы продолжить демонстрацию выбранной бета-версии. Стабильные версии от этого переключателя не зависят."
+            preferredStyle:UIAlertControllerStyleAlert];
+        [betaAlert addAction:[UIAlertAction actionWithTitle:@"Понятно" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:betaAlert animated:YES completion:nil];
+        return;
+    }
+
     _checking = YES;
     _updateButton.enabled = NO;
     [_updateButton setTitle:@"Проверка…" forState:UIControlStateNormal];
