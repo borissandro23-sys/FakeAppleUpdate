@@ -13,7 +13,7 @@ static NSString * const FAUDefaultsSuite = @"com.sasha.fakeappleupdate";
 static NSString * const FAUVersionKey = @"SelectedVersion";
 static NSString * const FAUVersionNameKey = @"SelectedVersionName";
 static NSString * const FAUAvailableKey = @"FakeUpdateAvailable";
-static NSString * const FAUResourcePath = @"/Library/Application Support/FakeAppleUpdate";
+static NSString * const FAUResourcePath = @"/var/jb/Library/Application Support/FakeAppleUpdate";
 
 static NSArray<NSDictionary *> *FAUVersionCatalog(void) {
     static NSArray *items;
