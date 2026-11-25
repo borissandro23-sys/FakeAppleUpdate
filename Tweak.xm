@@ -1,7 +1,18 @@
 #import <UIKit/UIKit.h>
-#import <objc/message.h>
 
 @interface PSListController : UIViewController
+@end
+
+@interface PSSpecifier : NSObject
++ (instancetype)preferenceSpecifierNamed:(NSString *)name
+                                  target:(id)target
+                                     set:(SEL)setter
+                                     get:(SEL)getter
+                                  detail:(Class)detail
+                                    cell:(NSInteger)cell
+                                    edit:(Class)edit;
+- (id)propertyForKey:(NSString *)key;
+- (void)setProperty:(id)value forKey:(NSString *)key;
 @end
 
 @interface FakeUpdatePreviewController : UIViewController
@@ -160,25 +171,21 @@ static NSString * const FAUAvailableKey = @"FakeUpdateAvailable";
     for (NSUInteger i = 0; i < original.count; i++) {
         id specifier = original[i];
         NSString *identifier = [specifier respondsToSelector:@selector(propertyForKey:)]
-            ? [specifier performSelector:@selector(propertyForKey:) withObject:@"id"] : nil;
+            ? [specifier propertyForKey:@"id"] : nil;
         if ([identifier isEqualToString:@"FAKE_UPDATE_PREVIEW"]) alreadyAdded = YES;
         if ([identifier isEqualToString:@"SOFTWARE_UPDATE_LINK"]) updateIndex = (NSInteger)i;
     }
     if (alreadyAdded || updateIndex == NSNotFound) return original;
 
-    Class specifierClass = NSClassFromString(@"PSSpecifier");
-    SEL factory = NSSelectorFromString(@"preferenceSpecifierNamed:target:set:get:detail:cell:edit:");
-    if (!specifierClass || ![specifierClass respondsToSelector:factory]) return original;
-
-    id preview = ((id (*)(id, SEL, id, id, SEL, SEL, id, NSInteger, id))objc_msgSend)(
-        specifierClass, factory, @"Предпросмотр обновления", self, NULL, NULL,
-        FakeUpdatePreviewController.class, 2, NULL);
+    PSSpecifier *preview = [PSSpecifier preferenceSpecifierNamed:@"Предпросмотр обновления"
+                                                               target:self
+                                                                  set:NULL
+                                                                  get:NULL
+                                                               detail:FakeUpdatePreviewController.class
+                                                                 cell:2
+                                                                 edit:Nil];
     if (!preview) return original;
-
-    [preview setValue:@"FAKE_UPDATE_PREVIEW" forKey:@"identifier"];
-    if ([preview respondsToSelector:@selector(setProperty:forKey:)]) {
-        [preview performSelector:@selector(setProperty:forKey:) withObject:@"FAKE_UPDATE_PREVIEW" withObject:@"id"];
-    }
+    [preview setProperty:@"FAKE_UPDATE_PREVIEW" forKey:@"id"];
 
     NSMutableArray *updated = [original mutableCopy];
     [updated insertObject:preview atIndex:(NSUInteger)updateIndex + 1];
