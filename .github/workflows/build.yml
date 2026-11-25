@@ -15,18 +15,13 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang make perl python3 git curl dpkg-dev cmake pkg-config libssl-dev zlib1g-dev
-          git clone --depth 1 https://github.com/ProcursusTeam/ldid.git /tmp/ldid
-          cmake -S /tmp/ldid -B /tmp/ldid/build -DCMAKE_BUILD_TYPE=Release
-          cmake --build /tmp/ldid/build --parallel 2
-          sudo install -m 0755 /tmp/ldid/build/ldid /usr/local/bin/ldid
+          sudo apt-get install -y clang make perl python3 git curl dpkg-dev pkg-config libssl-dev libplist-dev
 
-      - name: Install Theos
-        env:
-          THEOS: ${{ github.workspace }}/theos
+      - name: Build ldid
         run: |
-          git clone --recursive https://github.com/theos/theos.git "$THEOS"
-          git clone https://github.com/theos/sdks.git "$THEOS/sdks"
+          git clone --depth 1 https://github.com/ProcursusTeam/ldid.git /tmp/ldid
+          make -C /tmp/ldid -j2
+          sudo install -m 0755 /tmp/ldid/ldid /usr/local/bin/ldid
 
       - name: Build rootless package
         env:
