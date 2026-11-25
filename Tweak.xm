@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <sys/sysctl.h>
+#import <objc/runtime.h>
 
 static NSString * const FAUDefaultsSuite = @"com.sasha.fakeappleupdate";
 static NSString * const FAUVersionNameKey = @"SelectedVersionName";
@@ -538,6 +539,17 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 }
 @end
 
+%hook UINavigationController
+
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    %orig;
+    NSString *className = NSStringFromClass([viewController class]) ?: @"(unknown)";
+    NSString *title = viewController.title ?: @"(no title)";
+    NSLog(@"[FakeAppleUpdate][NAV] pushed controller: class=%@ title=%@", className, title);
+}
+
+%end
+
 %ctor {
-    NSLog(@"[FakeAppleUpdate] Loaded in Preferences");
+    NSLog(@"[FakeAppleUpdate] Loaded in Preferences; navigation diagnostics enabled");
 }
