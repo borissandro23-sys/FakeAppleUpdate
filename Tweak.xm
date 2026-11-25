@@ -400,7 +400,7 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
     BOOL current = [defaults objectForKey:key] ? [defaults boolForKey:key] : isAuto;
 
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
-        message:@"Это настройка только демонстрационного макета. Параметры iOS не изменяются."
+        message:(isAuto ? @"Это настройка только демонстрационного макета. Параметры iOS не изменяются." : @"Переключатель влияет только на версии, помеченные как Beta. Стабильные версии не затрагиваются.")
         preferredStyle:UIAlertControllerStyleActionSheet];
 
     [alert addAction:[UIAlertAction actionWithTitle:(current ? @"Выключить" : @"Включить")
