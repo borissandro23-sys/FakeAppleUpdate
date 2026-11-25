@@ -9,5 +9,6 @@ FakeAppleUpdate_FILES := Tweak.xm
 FakeAppleUpdate_CFLAGS := -fobjc-arc
 FakeAppleUpdate_FRAMEWORKS := UIKit Foundation
 FakeAppleUpdate_PRIVATE_FRAMEWORKS := Preferences
+FakeAppleUpdate_INSTALL_TARGET_PROCESSES := Preferences
 
 include $(THEOS_MAKE_PATH)/tweak.mk
