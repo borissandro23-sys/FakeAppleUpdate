@@ -84,7 +84,6 @@ static NSString * const FAUAvailableKey = @"FakeUpdateAvailable";
     [_updateButton setTitle:@"Обновить сейчас" forState:UIControlStateNormal];
     _updateButton.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
     _updateButton.layer.cornerRadius = 12.0;
-    _updateButton.contentEdgeInsets = UIEdgeInsetsMake(13, 16, 13, 16);
     [_updateButton addTarget:self action:@selector(startFakeUpdate) forControlEvents:UIControlEventTouchUpInside];
 
     UIButton *laterButton = [UIButton buttonWithType:UIButtonTypeSystem];
