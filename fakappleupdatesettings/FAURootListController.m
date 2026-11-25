@@ -10,7 +10,7 @@
     [versions setProperty:@"showVersionPicker:" forKey:@"action"];
     PSSpecifier *preview = [PSSpecifier preferenceSpecifierNamed:@"Предпросмотр обновления" target:self set:NULL get:NULL detail:nil cell:PSButtonCell edit:nil];
     [preview setProperty:@"showUpdatePreview:" forKey:@"action"];
-    _specifiers = @[group, versions, preview];
+    _specifiers = [NSMutableArray arrayWithObjects:group, versions, preview, nil];
     return _specifiers;
 }
 - (void)showVersionPicker:(PSSpecifier *)specifier {
