@@ -23,6 +23,13 @@ jobs:
           make -C /tmp/ldid -j2
           sudo install -m 0755 /tmp/ldid/ldid /usr/local/bin/ldid
 
+      - name: Install Theos
+        env:
+          THEOS: ${{ github.workspace }}/theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git "$THEOS"
+          git clone --depth 1 https://github.com/theos/sdks.git "$THEOS/sdks"
+
       - name: Build rootless package
         env:
           THEOS: ${{ github.workspace }}/theos
