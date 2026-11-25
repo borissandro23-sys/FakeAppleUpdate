@@ -8,8 +8,10 @@
     [group setProperty:@"Выбери версию iOS и открой предпросмотр. Настоящая загрузка и установка обновлений не выполняются." forKey:@"footerText"];
     PSSpecifier *versions = [PSSpecifier preferenceSpecifierNamed:@"Выбрать версию iOS" target:self set:NULL get:NULL detail:nil cell:PSButtonCell edit:nil];
     [versions setProperty:@"showVersionPicker:" forKey:@"action"];
+    [versions setProperty:@YES forKey:@"enabled"];
     PSSpecifier *preview = [PSSpecifier preferenceSpecifierNamed:@"Предпросмотр обновления" target:self set:NULL get:NULL detail:nil cell:PSButtonCell edit:nil];
     [preview setProperty:@"showUpdatePreview:" forKey:@"action"];
+    [preview setProperty:@YES forKey:@"enabled"];
     _specifiers = [NSMutableArray arrayWithObjects:group, versions, preview, nil];
     return _specifiers;
 }
