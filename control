@@ -1,9 +1,9 @@
 Package: com.sasha.fakeappleupdate
 Name: FakeAppleUpdate
-Version: 0.3.0
+Version: 0.3.1
 Architecture: iphoneos-arm64
-Description: Adds a local FakeAppleUpdate menu to the Settings root.
+Description: Adds a local FakeAppleUpdate settings panel and preview.
 Maintainer: Sasha
 Author: Sasha
 Section: Tweaks
-Depends: mobilesubstrate
+Depends: mobilesubstrate, preferenceloader
