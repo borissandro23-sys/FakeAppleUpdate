@@ -287,12 +287,12 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
     _updateButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _updateButton.translatesAutoresizingMaskIntoConstraints = NO;
     [_updateButton setTitle:@"Загрузить и установить" forState:UIControlStateNormal];
-    [_updateButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
-    _updateButton.tintColor = [UIColor systemBlueColor];
+    [_updateButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    _updateButton.tintColor = [UIColor whiteColor];
     _updateButton.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
-    _updateButton.backgroundColor = [UIColor systemBackgroundColor];
+    _updateButton.backgroundColor = [UIColor colorWithWhite:0.24 alpha:1.0];
     _updateButton.layer.borderWidth = 1.0 / UIScreen.mainScreen.scale;
-    _updateButton.layer.borderColor = [UIColor separatorColor].CGColor;
+    _updateButton.layer.borderColor = [UIColor colorWithWhite:0.34 alpha:1.0].CGColor;
     _updateButton.layer.cornerRadius = 13;
     _updateButton.clipsToBounds = YES;
     [_updateButton addTarget:self action:@selector(downloadTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -499,8 +499,8 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
     _checking = YES;
     _updateButton.enabled = NO;
     [_updateButton setTitle:@"Проверка…" forState:UIControlStateNormal];
-    _updateButton.backgroundColor = [UIColor systemBackgroundColor];
-    [_updateButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
+    _updateButton.backgroundColor = [UIColor colorWithWhite:0.24 alpha:1.0];
+    [_updateButton setTitleColor:[UIColor colorWithWhite:0.78 alpha:1.0] forState:UIControlStateNormal];
     _statusLabel.text = @"Идёт имитация проверки обновления…";
 
     __weak typeof(self) weakSelf = self;
@@ -511,8 +511,8 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
         strongSelf->_checking = NO;
         strongSelf->_statusLabel.text = @"Демонстрация завершена. Обновление не загружалось и не устанавливалось.";
         [strongSelf->_updateButton setTitle:@"Загрузить и установить" forState:UIControlStateNormal];
-        strongSelf->_updateButton.backgroundColor = [UIColor systemBackgroundColor];
-        [strongSelf->_updateButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
+        strongSelf->_updateButton.backgroundColor = [UIColor colorWithWhite:0.24 alpha:1.0];
+        [strongSelf->_updateButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         strongSelf->_updateButton.enabled = YES;
 
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Демонстрационный режим"
