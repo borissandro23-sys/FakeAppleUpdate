@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import <sys/sysctl.h>
 
 static NSString * const FAUDefaultsSuite = @"com.sasha.fakeappleupdate";
 static NSString * const FAUVersionNameKey = @"SelectedVersionName";
@@ -63,26 +64,57 @@ static NSDictionary *FAUSelectedVersion(void) {
     return FAUVersionCatalog().lastObject;
 }
 
-static NSString *FAUUpdateSizeForVersion(NSDictionary *item) {
-    NSString *name = item[@"name"] ?: @"iOS 18.0";
-    NSString *versionPart = [[name componentsSeparatedByString:@" "] lastObject];
-    NSArray<NSString *> *parts = [versionPart componentsSeparatedByString:@"."];
-    NSInteger major = parts.count > 0 ? parts[0].integerValue : 18;
-    NSInteger minor = parts.count > 1 ? parts[1].integerValue : 0;
-    NSInteger patch = parts.count > 2 ? parts[2].integerValue : 0;
-
-    // Ориентировочная величина для макета. Реальный размер OTA зависит от устройства и сборки.
-    NSInteger megabytes = (minor == 0 && patch == 0)
-        ? (850 + major * 42)
-        : (180 + minor * 55 + patch * 35);
-    if ([item[@"isBeta"] boolValue]) megabytes += 120;
-    megabytes = MAX(120, MIN(megabytes, 2600));
-
-    if (megabytes >= 1024) {
-        double gigabytes = megabytes / 1024.0;
-        return [NSString stringWithFormat:@"Размер: около %.1f ГБ", gigabytes];
+static NSString *FAUHardwareIdentifier(void) {
+    char machine[128] = {0};
+    size_t size = sizeof(machine);
+    if (sysctlbyname("hw.machine", machine, &size, NULL, 0) == 0) {
+        return [NSString stringWithUTF8String:machine];
     }
-    return [NSString stringWithFormat:@"Размер: около %ld МБ", (long)megabytes];
+    return @"unknown";
+}
+
+static NSString *FAUUpdateSizeForVersion(NSDictionary *item) {
+    NSString *name = item[@"name"] ?: @"";
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"([0-9]+(?:\\.[0-9]+){1,2})" options:0 error:nil];
+    NSTextCheckingResult *match = [regex firstMatchInString:name options:0 range:NSMakeRange(0, name.length)];
+    if (!match) return @"Размер OTA: нет данных";
+    NSString *version = [name substringWithRange:[match rangeAtIndex:1]];
+    NSString *machine = FAUHardwareIdentifier();
+
+    // Зафиксированные размеры OTA из каталога IPSWGuide. Это размер пакета для указанной модели и сборки.
+    // У разных исходных версий iOS размер OTA может отличаться. Для отсутствующих записей точное значение не подставляется.
+    static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *sizes;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sizes = @{
+            @"iPhone8,1": @{
+                @"15.8.8": @"4.10 ГБ", @"15.8.7": @"4.10 ГБ", @"15.8.6": @"4.10 ГБ",
+                @"15.8.5": @"4.10 ГБ", @"15.8.4": @"4.10 ГБ", @"15.8.3": @"4.10 ГБ",
+                @"15.8.2": @"4.10 ГБ", @"15.8.1": @"4.10 ГБ", @"15.8": @"4.10 ГБ",
+                @"15.7.9": @"4.10 ГБ", @"15.7.8": @"4.10 ГБ", @"15.7.7": @"4.10 ГБ",
+                @"15.7.6": @"4.10 ГБ", @"15.7.5": @"136 МБ", @"11.3": @"320 МБ",
+                @"11.2.5": @"140 МБ"
+            },
+            @"iPhone10,1": @{@"16.7.16": @"4.71 ГБ", @"16.7.15": @"4.71 ГБ"},
+            @"iPhone10,4": @{@"16.7.16": @"4.71 ГБ", @"16.7.15": @"4.71 ГБ"},
+            @"iPhone10,3": @{@"16.7.16": @"4.83 ГБ", @"16.7.15": @"4.83 ГБ"},
+            @"iPhone10,6": @{@"16.7.16": @"4.83 ГБ", @"16.7.15": @"4.83 ГБ"},
+            @"iPhone12,1": @{
+                @"27.2.1": @"8.03 ГБ", @"27.2": @"8.03 ГБ",
+                @"27.0.1": @"7.86 ГБ", @"27.0": @"7.86 ГБ",
+                @"26.7.3": @"7.54 ГБ", @"26.7.2": @"7.54 ГБ",
+                @"26.7.1": @"7.54 ГБ", @"26.7": @"7.54 ГБ",
+                @"26.6.2": @"7.53 ГБ", @"26.6.1": @"7.53 ГБ",
+                @"26.6": @"7.53 ГБ", @"26.5.2": @"7.45 ГБ",
+                @"26.5": @"7.45 ГБ", @"26.4.2": @"7.44 ГБ",
+                @"26.4.1": @"7.44 ГБ", @"26.4": @"7.44 ГБ"
+            }
+        };
+    });
+
+    NSString *size = sizes[machine][version];
+    if (size.length) return [NSString stringWithFormat:@"Размер OTA: %@", size];
+    return @"Размер OTA: нет точных данных";
 }
 
 static UIImage *FAUImageForVersion(NSDictionary *item) {
