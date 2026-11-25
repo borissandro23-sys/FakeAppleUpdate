@@ -9,51 +9,35 @@ static NSArray<NSDictionary *> *FAUVersionCatalog(void) {
     static NSArray *items;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSArray *rows = @[
-            @[@"iPhone OS 1.0",@"01_iPhoneOS_1.png"], @[@"iPhone OS 1.1",@"01_iPhoneOS_1.png"],
-            @[@"iPhone OS 2.0",@"02_iPhoneOS_2.png"], @[@"iPhone OS 2.1",@"02_iPhoneOS_2.png"], @[@"iPhone OS 2.2.1",@"02_iPhoneOS_2.png"],
-            @[@"iPhone OS 3.0",@"03_iPhoneOS_3.png"], @[@"iPhone OS 3.1.3",@"03_iPhoneOS_3.png"],
-            @[@"iOS 4.0",@"04_iOS_4.png"], @[@"iOS 4.3.5",@"04_iOS_4.png"],
-            @[@"iOS 5.0",@"05_iOS_5.png"], @[@"iOS 5.1.1",@"05_iOS_5.png"],
-            @[@"iOS 6.0",@"06_iOS_6.png"], @[@"iOS 6.1.6",@"06_iOS_6.png"],
-            @[@"iOS 7.0",@"07_iOS_7.png"], @[@"iOS 7.1.2",@"07_iOS_7.png"],
-            @[@"iOS 8.0",@"08_iOS_8.png"], @[@"iOS 8.4.1",@"08_iOS_8.png"],
-            @[@"iOS 9.0",@"09_iOS_9.png"], @[@"iOS 9.3.6",@"09_iOS_9.png"],
-            @[@"iOS 10.0",@"10_iOS_10.png"], @[@"iOS 10.3.4",@"10_iOS_10.png"],
-            @[@"iOS 11.0",@"11_iOS_11.png"], @[@"iOS 11.4.1",@"11_iOS_11.png"],
-            @[@"iOS 12.0",@"12_iOS_12.png"], @[@"iOS 12.5.7",@"12_iOS_12.png"],
-            @[@"iOS 13.0",@"13_iOS_13.png"], @[@"iOS 13.7",@"13_iOS_13.png"],
-            @[@"iOS 14.0",@"14_iOS_14.png"], @[@"iOS 14.8.1",@"14_iOS_14.png"],
-            @[@"iOS 15.0",@"15_iOS_15.png"], @[@"iOS 15.0.1",@"15_iOS_15.png"], @[@"iOS 15.0.2",@"15_iOS_15.png"],
-            @[@"iOS 15.1",@"15_iOS_15.png"], @[@"iOS 15.1.1",@"15_iOS_15.png"], @[@"iOS 15.2",@"15_iOS_15.png"],
-            @[@"iOS 15.2.1",@"15_iOS_15.png"], @[@"iOS 15.3",@"15_iOS_15.png"], @[@"iOS 15.3.1",@"15_iOS_15.png"],
-            @[@"iOS 15.4",@"15_iOS_15.png"], @[@"iOS 15.4.1",@"15_iOS_15.png"], @[@"iOS 15.5",@"15_iOS_15.png"],
-            @[@"iOS 15.6",@"15_iOS_15.png"], @[@"iOS 15.6.1",@"15_iOS_15.png"], @[@"iOS 15.7",@"15_iOS_15.png"],
-            @[@"iOS 15.7.1",@"15_iOS_15.png"], @[@"iOS 15.7.2",@"15_iOS_15.png"], @[@"iOS 15.7.3",@"15_iOS_15.png"],
-            @[@"iOS 15.7.4",@"15_iOS_15.png"], @[@"iOS 15.7.5",@"15_iOS_15.png"], @[@"iOS 15.7.6",@"15_iOS_15.png"],
-            @[@"iOS 15.7.7",@"15_iOS_15.png"], @[@"iOS 15.7.8",@"15_iOS_15.png"], @[@"iOS 15.8",@"15_iOS_15.png"],
-            @[@"iOS 15.8.1",@"15_iOS_15.png"], @[@"iOS 15.8.2",@"15_iOS_15.png"], @[@"iOS 15.8.3",@"15_iOS_15.png"],
-            @[@"iOS 15.8.4",@"15_iOS_15.png"], @[@"iOS 15.8.5",@"15_iOS_15.png"], @[@"iOS 15.8.6",@"15_iOS_15.png"],
-            @[@"iOS 15.8.7",@"15_iOS_15.png"], @[@"iOS 15.8.8",@"15_iOS_15.png"],
-            @[@"iOS 16.0",@"16_iOS_16.png"], @[@"iOS 16.0.2",@"16_iOS_16.png"], @[@"iOS 16.1",@"16_iOS_16.png"],
-            @[@"iOS 16.1.2",@"16_iOS_16.png"], @[@"iOS 16.2",@"16_iOS_16.png"], @[@"iOS 16.3",@"16_iOS_16.png"],
-            @[@"iOS 16.3.1",@"16_iOS_16.png"], @[@"iOS 16.4",@"16_iOS_16.png"], @[@"iOS 16.4.1",@"16_iOS_16.png"],
-            @[@"iOS 16.5",@"16_iOS_16.png"], @[@"iOS 16.5.1",@"16_iOS_16.png"], @[@"iOS 16.6",@"16_iOS_16.png"],
-            @[@"iOS 16.6.1",@"16_iOS_16.png"], @[@"iOS 16.7",@"16_iOS_16.png"], @[@"iOS 16.7.1",@"16_iOS_16.png"],
-            @[@"iOS 16.7.2",@"16_iOS_16.png"], @[@"iOS 16.7.3",@"16_iOS_16.png"], @[@"iOS 16.7.4",@"16_iOS_16.png"],
-            @[@"iOS 16.7.5",@"16_iOS_16.png"], @[@"iOS 16.7.6",@"16_iOS_16.png"], @[@"iOS 16.7.7",@"16_iOS_16.png"],
-            @[@"iOS 16.7.8",@"16_iOS_16.png"], @[@"iOS 16.7.9",@"16_iOS_16.png"], @[@"iOS 16.7.10",@"16_iOS_16.png"],
-            @[@"iOS 16.7.11",@"16_iOS_16.png"], @[@"iOS 16.7.12",@"16_iOS_16.png"], @[@"iOS 16.7.13",@"16_iOS_16.png"],
-            @[@"iOS 16.7.14",@"16_iOS_16.png"], @[@"iOS 16.7.15",@"16_iOS_16.png"], @[@"iOS 16.7.16",@"16_iOS_16.png"],
-            @[@"iOS 17.0",@"17_iOS_17.png"], @[@"iOS 17.1",@"17_iOS_17.png"], @[@"iOS 17.2",@"17_iOS_17.png"],
-            @[@"iOS 17.3",@"17_iOS_17.png"], @[@"iOS 17.4",@"17_iOS_17.png"], @[@"iOS 17.5",@"17_iOS_17.png"],
-            @[@"iOS 17.6",@"17_iOS_17.png"], @[@"iOS 17.7",@"17_iOS_17.png"], @[@"iOS 18.0",@"18_iOS_18.png"],
-            @[@"iOS 18.1",@"18_iOS_18.png"], @[@"iOS 18.2",@"18_iOS_18.png"], @[@"iOS 18.3",@"18_iOS_18.png"],
-            @[@"iOS 18.4",@"18_iOS_18.png"], @[@"iOS 18.5",@"18_iOS_18.png"], @[@"iOS 18.6",@"18_iOS_18.png"],
-            @[@"iOS 26.0",@"19_iOS_26.png"], @[@"iOS 26.1",@"19_iOS_26.png"]
+        NSArray *groups = @[
+            @{@"prefix":@"iPhone OS ", @"image":@"01_iPhoneOS_1.png", @"versions":@"1.0 1.1 1.1.1 1.1.2 1.1.3 1.1.4 1.1.5", @"description":@"Первая версия iPhone OS. Интерфейс Multi-Touch, Safari, телефон, почта, карты и базовые приложения iPhone."},
+            @{@"prefix":@"iPhone OS ", @"image":@"02_iPhoneOS_2.png", @"versions":@"2.0 2.0.1 2.0.2 2.1 2.2 2.2.1", @"description":@"Появился App Store и поддержка сторонних приложений. Добавлены push-уведомления для приложений и новые возможности системы."},
+            @{@"prefix":@"iPhone OS ", @"image":@"03_iPhoneOS_3.png", @"versions":@"3.0 3.0.1 3.1 3.1.2 3.1.3 3.2 3.2.1 3.2.2", @"description":@"Добавлены копирование и вставка, поиск Spotlight, MMS, голосовое управление и новые функции приложений. Версия 3.2 предназначалась для iPad."},
+            @{@"prefix":@"iOS ", @"image":@"04_iOS_4.png", @"versions":@"4.0 4.0.1 4.0.2 4.1 4.2 4.2.1 4.3 4.3.1 4.3.2 4.3.3 4.3.4 4.3.5", @"description":@"Многозадачность, папки на домашнем экране, FaceTime и обновлённый интерфейс. В последующих выпусках добавлялись AirPlay и улучшения производительности."},
+            @{@"prefix":@"iOS ", @"image":@"05_iOS_5.png", @"versions":@"5.0 5.0.1 5.1 5.1.1", @"description":@"Добавлены Центр уведомлений, iMessage, iCloud, Напоминания и интеграция Siri на поддерживаемых устройствах."},
+            @{@"prefix":@"iOS ", @"image":@"06_iOS_6.png", @"versions":@"6.0 6.0.1 6.0.2 6.1 6.1.1 6.1.2 6.1.3 6.1.4 6.1.5 6.1.6", @"description":@"Появились Apple Maps, Passbook и улучшенная интеграция с Facebook. Поздние обновления исправляли ошибки и проблемы безопасности."},
+            @{@"prefix":@"iOS ", @"image":@"07_iOS_7.png", @"versions":@"7.0 7.0.1 7.0.2 7.0.3 7.0.4 7.0.5 7.0.6 7.1 7.1.1 7.1.2", @"description":@"Полностью переработан внешний вид iOS. Добавлены Пункт управления, AirDrop, обновлённая многозадачность и новые системные анимации."},
+            @{@"prefix":@"iOS ", @"image":@"08_iOS_8.png", @"versions":@"8.0 8.0.1 8.0.2 8.1 8.1.1 8.1.2 8.1.3 8.2 8.3 8.4 8.4.1", @"description":@"Добавлены виджеты в Центре уведомлений, Continuity, приложение Здоровье, Apple Pay и Apple Music. Появилась поддержка сторонних клавиатур."},
+            @{@"prefix":@"iOS ", @"image":@"09_iOS_9.png", @"versions":@"9.0 9.0.1 9.0.2 9.1 9.2 9.2.1 9.3 9.3.1 9.3.2 9.3.3 9.3.4 9.3.5 9.3.6", @"description":@"Улучшена производительность, добавлен режим энергосбережения, обновлены Заметки и Карты. На поддерживаемых устройствах появился Night Shift."},
+            @{@"prefix":@"iOS ", @"image":@"10_iOS_10.png", @"versions":@"10.0 10.0.1 10.0.2 10.0.3 10.1 10.1.1 10.2 10.2.1 10.3 10.3.1 10.3.2 10.3.3 10.3.4", @"description":@"Обновлены экран блокировки и уведомления, появились приложения iMessage, Дом и новые возможности Siri. В iOS 10.3 внедрена файловая система APFS."},
+            @{@"prefix":@"iOS ", @"image":@"11_iOS_11.png", @"versions":@"11.0 11.0.1 11.0.2 11.0.3 11.1 11.1.1 11.1.2 11.2 11.2.1 11.2.2 11.2.5 11.2.6 11.3 11.3.1 11.4 11.4.1", @"description":@"Обновлён Пункт управления, добавлено приложение Файлы, улучшена работа с iPad и появилась платформа дополненной реальности ARKit. Поддержка 32-битных приложений прекращена."},
+            @{@"prefix":@"iOS ", @"image":@"12_iOS_12.png", @"versions":@"12.0 12.0.1 12.1 12.1.1 12.1.2 12.1.3 12.1.4 12.2 12.3 12.3.1 12.3.2 12.4 12.4.1 12.4.2 12.4.3 12.4.4 12.4.5 12.4.6 12.4.7 12.4.8 12.4.9 12.5 12.5.1 12.5.2 12.5.3 12.5.4 12.5.5 12.5.6 12.5.7 12.5.8", @"description":@"Ускорена работа системы на старых устройствах. Добавлены Экранное время, Команды, групповые звонки FaceTime и группировка уведомлений. Поздние версии содержат исправления безопасности."},
+            @{@"prefix":@"iOS ", @"image":@"13_iOS_13.png", @"versions":@"13.0 13.1 13.1.1 13.1.2 13.1.3 13.2 13.2.2 13.2.3 13.3 13.3.1 13.4 13.4.1 13.5 13.5.1 13.6 13.6.1 13.7", @"description":@"Добавлены тёмный режим, вход с Apple ID и обновлённые Фото и Карты. На iPhone впервые появилась отдельная от iPad ветка iPadOS."},
+            @{@"prefix":@"iOS ", @"image":@"14_iOS_14.png", @"versions":@"14.0 14.0.1 14.1 14.2 14.2.1 14.3 14.4 14.4.1 14.4.2 14.5 14.5.1 14.6 14.7 14.7.1 14.8 14.8.1", @"description":@"Появились виджеты на домашнем экране, Библиотека приложений, компактные вызовы и App Clips. Добавлены новые настройки конфиденциальности."},
+            @{@"prefix":@"iOS ", @"image":@"15_iOS_15.png", @"versions":@"15.0 15.0.1 15.0.2 15.1 15.1.1 15.2 15.2.1 15.3 15.3.1 15.4 15.4.1 15.5 15.6 15.6.1 15.7 15.7.1 15.7.2 15.7.3 15.7.4 15.7.5 15.7.6 15.7.7 15.7.8 15.8 15.8.1 15.8.2 15.8.3 15.8.4 15.8.5 15.8.6 15.8.7 15.8.8", @"description":@"Добавлены режимы фокусирования, SharePlay, Live Text и улучшения FaceTime, Safari и Карт. Поздние обновления для старых устройств включают исправления ошибок и безопасности."},
+            @{@"prefix":@"iOS ", @"image":@"16_iOS_16.png", @"versions":@"16.0 16.0.1 16.0.2 16.0.3 16.1 16.1.1 16.1.2 16.2 16.3 16.3.1 16.4 16.4.1 16.5 16.5.1 16.6 16.6.1 16.7 16.7.1 16.7.2 16.7.3 16.7.4 16.7.5 16.7.6 16.7.7 16.7.8 16.7.9 16.7.10 16.7.11 16.7.12 16.7.13 16.7.14 16.7.15 16.7.16", @"description":@"Добавлены настраиваемый экран блокировки, виджеты на экране блокировки, редактирование и отмена отправки сообщений и улучшения Фокуса."},
+            @{@"prefix":@"iOS ", @"image":@"17_iOS_17.png", @"versions":@"17.0 17.0.1 17.0.2 17.0.3 17.1 17.1.1 17.1.2 17.2 17.2.1 17.3 17.3.1 17.4 17.4.1 17.5 17.5.1 17.6 17.6.1 17.7 17.7.1 17.7.2", @"description":@"Появились режим ожидания StandBy, NameDrop, контактные постеры и интерактивные виджеты. Обновлены Телефон, Сообщения и FaceTime."},
+            @{@"prefix":@"iOS ", @"image":@"18_iOS_18.png", @"versions":@"18.0 18.0.1 18.1 18.1.1 18.2 18.2.1 18.3 18.3.1 18.3.2 18.4 18.4.1 18.5 18.6 18.6.1 18.6.2 18.7 18.7.1 18.7.2 18.7.3 18.7.4 18.7.5 18.7.6 18.7.7 18.7.8 18.7.9 18.7.10 18.7.11 18.7.12", @"description":@"Добавлены широкие настройки домашнего экрана и Пункта управления, новые возможности Фото и приложения Пароли. Apple Intelligence доступна на совместимых устройствах и языках."},
+            @{@"prefix":@"iOS ", @"image":@"19_iOS_26.png", @"versions":@"26.0 26.0.1 26.1 26.2 26.2.1 26.3 26.3.1 26.4 26.4.1 26.4.2 26.5 26.5.1 26.5.2 26.6 26.6.1 26.6.2 26.7 26.7.1 26.7.2 26.7.3", @"description":@"Выпуск с новым дизайном Liquid Glass и обновлёнными системными интерфейсами. Нумерация перешла к обозначению по году; версии 19–25 публично не выпускались."},
+            @{@"prefix":@"iOS ", @"image":@"19_iOS_26.png", @"versions":@"27.0 27.0.1 27.1 27.2 27.2.1", @"description":@"Следующее поколение iOS с дальнейшими изменениями системы и функций Apple Intelligence. Состав возможностей зависит от модели iPhone."}
         ];
-        NSMutableArray *result = [NSMutableArray arrayWithCapacity:rows.count];
-        for (NSArray *row in rows) [result addObject:@{@"name":row[0], @"image":row[1]}];
+        NSMutableArray *result = [NSMutableArray array];
+        for (NSDictionary *group in groups) {
+            for (NSString *number in [group[@"versions"] componentsSeparatedByString:@" "]) {
+                NSString *name = [group[@"prefix"] stringByAppendingString:number];
+                [result addObject:@{@"name":name, @"image":group[@"image"], @"description":group[@"description"]}];
+            }
+        }
         items = result.copy;
     });
     return items;
@@ -208,7 +192,7 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
     UILabel *descriptionLabel = [[UILabel alloc] init];
     descriptionLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    descriptionLabel.text = @"Это демонстрационный макет обновления. Он показывает пример описания обновления системы безопасности и исправлений ошибок. Выбранная версия не устанавливается на устройство.";
+    descriptionLabel.text = selected[@"description"] ?: @"Описание этой версии отсутствует. Это демонстрационный макет.";
     descriptionLabel.font = [UIFont systemFontOfSize:15];
     descriptionLabel.textColor = [UIColor labelColor];
     descriptionLabel.numberOfLines = 0;
@@ -228,9 +212,12 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
     _updateButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _updateButton.translatesAutoresizingMaskIntoConstraints = NO;
     [_updateButton setTitle:@"Загрузить и установить" forState:UIControlStateNormal];
-    [_updateButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    [_updateButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
+    _updateButton.tintColor = [UIColor systemBlueColor];
     _updateButton.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightSemibold];
-    _updateButton.backgroundColor = [UIColor systemBlueColor];
+    _updateButton.backgroundColor = UIColor.whiteColor;
+    _updateButton.layer.borderWidth = 1.0 / UIScreen.mainScreen.scale;
+    _updateButton.layer.borderColor = [UIColor colorWithWhite:0.82 alpha:1.0].CGColor;
     _updateButton.layer.cornerRadius = 13;
     _updateButton.clipsToBounds = YES;
     [_updateButton addTarget:self action:@selector(downloadTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -423,7 +410,8 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
     _checking = YES;
     _updateButton.enabled = NO;
     [_updateButton setTitle:@"Проверка…" forState:UIControlStateNormal];
-    _updateButton.backgroundColor = [UIColor systemGrayColor];
+    _updateButton.backgroundColor = UIColor.whiteColor;
+    [_updateButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateNormal];
     _statusLabel.text = @"Идёт имитация проверки обновления…";
 
     __weak typeof(self) weakSelf = self;
@@ -434,7 +422,8 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
         strongSelf->_checking = NO;
         strongSelf->_statusLabel.text = @"Демонстрация завершена. Обновление не загружалось и не устанавливалось.";
         [strongSelf->_updateButton setTitle:@"Загрузить и установить" forState:UIControlStateNormal];
-        strongSelf->_updateButton.backgroundColor = [UIColor systemBlueColor];
+        strongSelf->_updateButton.backgroundColor = UIColor.whiteColor;
+        [strongSelf->_updateButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
         strongSelf->_updateButton.enabled = YES;
 
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Демонстрационный режим"
