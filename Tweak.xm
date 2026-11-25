@@ -3,6 +3,9 @@
 @interface PSListController : UIViewController
 @end
 
+@interface PSUIPrefsListController : PSListController
+@end
+
 @interface PSSpecifier : NSObject
 + (instancetype)preferenceSpecifierNamed:(NSString *)name target:(id)target set:(SEL)setter get:(SEL)getter detail:(Class)detail cell:(NSInteger)cell edit:(Class)edit;
 - (id)propertyForKey:(NSString *)key;
@@ -273,7 +276,8 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
 @end
 
-@interface FakeAppleUpdateHomeController : UITableViewController
+@interface FakeAppleUpdateHomeController : PSListController <UITableViewDataSource, UITableViewDelegate>
+@property(nonatomic, strong) UITableView *fauTableView;
 @end
 
 @implementation FakeAppleUpdateHomeController
@@ -281,8 +285,20 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"FakeAppleUpdate";
-    self.tableView.backgroundColor = [UIColor systemGroupedBackgroundColor];
-    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"FAUHomeCell"];
+
+    self.fauTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
+    self.fauTableView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.fauTableView.backgroundColor = [UIColor systemGroupedBackgroundColor];
+    self.fauTableView.dataSource = self;
+    self.fauTableView.delegate = self;
+    [self.fauTableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"FAUHomeCell"];
+    [self.view addSubview:self.fauTableView];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.fauTableView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+        [self.fauTableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+        [self.fauTableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [self.fauTableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor]
+    ]];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -313,13 +329,10 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
 @end
 
-%hook PSListController
+%hook PSUIPrefsListController
 - (NSArray *)specifiers {
     NSArray *original = %orig;
     if (![original isKindOfClass:NSArray.class]) return original;
-
-    // The root page of Settings is PSRootController. Do not modify nested Settings pages.
-    if (![NSStringFromClass(self.class) isEqualToString:@"PSRootController"]) return original;
 
     for (id specifier in original) {
         NSString *identifier = [specifier respondsToSelector:@selector(propertyForKey:)]
@@ -329,7 +342,7 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
     NSMutableArray *updated = [original mutableCopy];
     PSSpecifier *home = [PSSpecifier preferenceSpecifierNamed:@"FakeAppleUpdate"
-        target:self set:NULL get:NULL detail:FakeAppleUpdateHomeController.class cell:2 edit:Nil];
+        target:self set:NULL get:NULL detail:FakeAppleUpdateHomeController.class cell:1 edit:Nil];
     [home setProperty:@"FAKE_APPLE_UPDATE_HOME" forKey:@"id"];
     [updated addObject:home];
     return updated;
