@@ -273,37 +273,69 @@ static UIImage *FAUImageForVersion(NSDictionary *item) {
 
 @end
 
+@interface FakeAppleUpdateHomeController : UITableViewController
+@end
+
+@implementation FakeAppleUpdateHomeController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"FakeAppleUpdate";
+    self.tableView.backgroundColor = [UIColor systemGroupedBackgroundColor];
+    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"FAUHomeCell"];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 2;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FAUHomeCell" forIndexPath:indexPath];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.backgroundColor = [UIColor secondarySystemGroupedBackgroundColor];
+    if (indexPath.row == 0) {
+        cell.textLabel.text = @"Выбрать версию iOS";
+        cell.imageView.image = [UIImage systemImageNamed:@"iphone"];
+    } else {
+        cell.textLabel.text = @"Предпросмотр обновления";
+        cell.imageView.image = [UIImage systemImageNamed:@"arrow.down.circle"];
+    }
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    UIViewController *controller = indexPath.row == 0
+        ? [[FakeUpdateVersionPickerController alloc] init]
+        : [[FakeUpdatePreviewController alloc] init];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
+@end
+
 %hook PSListController
 - (NSArray *)specifiers {
     NSArray *original = %orig;
-    if (![original isKindOfClass:NSArray.class] || original.count == 0) return original;
-    BOOL hasPicker = NO, hasPreview = NO;
-    NSInteger updateIndex = NSNotFound;
-    for (NSUInteger i = 0; i < original.count; i++) {
-        id specifier = original[i];
-        NSString *identifier = [specifier respondsToSelector:@selector(propertyForKey:)] ? [specifier propertyForKey:@"id"] : nil;
-        if ([identifier isEqualToString:@"FAKE_UPDATE_PICKER"]) hasPicker = YES;
-        if ([identifier isEqualToString:@"FAKE_UPDATE_PREVIEW"]) hasPreview = YES;
-        if ([identifier isEqualToString:@"SOFTWARE_UPDATE_LINK"]) updateIndex = (NSInteger)i;
+    if (![original isKindOfClass:NSArray.class]) return original;
+
+    // The root page of Settings is PSRootController. Do not modify nested Settings pages.
+    if (![NSStringFromClass(self.class) isEqualToString:@"PSRootController"]) return original;
+
+    for (id specifier in original) {
+        NSString *identifier = [specifier respondsToSelector:@selector(propertyForKey:)]
+            ? [specifier propertyForKey:@"id"] : nil;
+        if ([identifier isEqualToString:@"FAKE_APPLE_UPDATE_HOME"]) return original;
     }
-    if ((hasPicker && hasPreview) || updateIndex == NSNotFound) return original;
 
     NSMutableArray *updated = [original mutableCopy];
-    NSUInteger insertIndex = (NSUInteger)updateIndex + 1;
-    if (!hasPicker) {
-        PSSpecifier *picker = [PSSpecifier preferenceSpecifierNamed:@"Выбрать версию iOS" target:self set:NULL get:NULL detail:FakeUpdateVersionPickerController.class cell:2 edit:Nil];
-        [picker setProperty:@"FAKE_UPDATE_PICKER" forKey:@"id"];
-        [updated insertObject:picker atIndex:insertIndex++];
-    }
-    if (!hasPreview) {
-        PSSpecifier *preview = [PSSpecifier preferenceSpecifierNamed:@"Предпросмотр обновления" target:self set:NULL get:NULL detail:FakeUpdatePreviewController.class cell:2 edit:Nil];
-        [preview setProperty:@"FAKE_UPDATE_PREVIEW" forKey:@"id"];
-        [updated insertObject:preview atIndex:insertIndex];
-    }
+    PSSpecifier *home = [PSSpecifier preferenceSpecifierNamed:@"FakeAppleUpdate"
+        target:self set:NULL get:NULL detail:FakeAppleUpdateHomeController.class cell:2 edit:Nil];
+    [home setProperty:@"FAKE_APPLE_UPDATE_HOME" forKey:@"id"];
+    [updated addObject:home];
     return updated;
 }
 %end
 
 %ctor {
-    NSLog(@"[FakeAppleUpdate] Local preview loaded");
+    NSLog(@"[FakeAppleUpdate] Root Settings entry loaded");
 }
